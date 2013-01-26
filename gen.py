@@ -3,8 +3,6 @@ import matplotlib
 __author__ = 'Anastassia'
 
 import numpy
-import random
-import math
 import matplotlib.pyplot as plt
 
 
@@ -70,7 +68,7 @@ def plot_points(coords, f):
     cnorm   = c_normalize(min(f), max(f))
     cmap    = get_cmap('cool')      # try one of this: http://www.scipy.org/Cookbook/Matplotlib/Show_colormaps
     for i in range(f.size):
-        plt.scatter(coords[i,0], coords[i,1], s=20, color = cmap(cnorm(f[i])) )
+        plt.scatter(coords[i,0], coords[i,1], s=100, color = cmap(cnorm(f[i])) )
     plt.grid(True)
     plt.xlabel('x')
     plt.ylabel('y')

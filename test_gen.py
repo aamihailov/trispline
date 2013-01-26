@@ -1,5 +1,7 @@
 __author__ = 'Anastassia'
 
+import random
+import math
 from gen import *
 
 f = lambda x, y: x + y
@@ -17,9 +19,9 @@ data   = generate_nonuniform(coords, f, eps)
 #ys   = numpy.arange(0, 10, 1)
 
 #data = generate_uniform(xs, ys, f, eps)
-save_to_file("test.dat", data)
+save_to_file("tests/t0.dat", data)
 
-points, func = load_from_file("test.dat")
+points, func = load_from_file("tests/t0.dat")
 #print points
 
 p = plot_points(points, func)
