@@ -1,7 +1,7 @@
 __author__ = 'Mihailov'
 
-class Grid(object):
-    pass
+from scipy.spatial import Delaunay
 
-def build_grid(points):
-    pass
+class Grid(Delaunay):
+    def __init__(self, coords):
+        super(Grid, self).__init__(coords)
