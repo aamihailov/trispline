@@ -50,5 +50,10 @@ class CubicHermiteSpline(Spline):
     def __init__(self, grid, f):
         super(CubicHermiteSpline, self).__init__(grid, f)
 
+    def _init_derivatives(self):
+        self._derivatives = [(0,0)] * self._grid.npoints
+        for i in xrange(self._grid.npoints):
+            self._derivatives[i] = np.average(self._grid.tri_vertices[i])
+
     def value(self, coords):
         return self._grid.value(coords)
