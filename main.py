@@ -4,10 +4,9 @@ import random
 import numpy
 from gen import generate_uniform, generate_nonuniform, save_to_file
 
-f = lambda x, y: 1 - 1./( x + y )
+f = lambda x, y: 1 + (1-x)**2 - y**2
 
 def eps():
-    return 0
     return random.normalvariate(0, 0.01)
 
 def rand():
@@ -18,13 +17,13 @@ def coordgen():
         for y in numpy.arange(-1,1,0.2):
             yield (x + eps(), y + eps())
 
-xs   = numpy.arange(-1, 1, 0.1)
-ys   = numpy.arange(-1, 1, 0.1)
+xs   = numpy.arange(-1, 1, 0.25)
+ys   = numpy.arange(-1, 1, 0.25)
 
 data = generate_uniform(xs, ys, f, eps)
 
-#coords = numpy.matrix([[rand() for j in range(2)] for i in range(100)])
-#data   = generate_nonuniform(coordgen, f, eps)
+coords = numpy.matrix([[rand() for j in range(2)] for i in range(100)])
+data   = generate_nonuniform(coordgen, f, eps)
 
 save_to_file("tests/t0.dat", data)
 

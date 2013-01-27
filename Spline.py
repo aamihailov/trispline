@@ -31,6 +31,9 @@ class Spline(object):
 
         plt.pcolor(X, Y, Z)
 
+        plt.xlim(self._grid.min_bound[0], self._grid.max_bound[0])
+        plt.ylim(self._grid.min_bound[1], self._grid.max_bound[1])
+
         return plt
 
 
@@ -41,3 +44,11 @@ class LinearInterpolation(Spline):
     def value(self, coords):
         return self._grid.value(coords)
 
+
+
+class CubicHermiteSpline(Spline):
+    def __init__(self, grid, f):
+        super(CubicHermiteSpline, self).__init__(grid, f)
+
+    def value(self, coords):
+        return self._grid.value(coords)
