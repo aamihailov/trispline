@@ -30,7 +30,7 @@ def generate_nonuniform(coords, f, eps):
     :param     eps:  error distribution     none  -> value
     :returns      :  matrix with n*m rows, 3 columns: (x, y, f)
     """
-    return numpy.matrix([[coords[i,0], coords[i,1], f(coords[i,0], coords[i,1]) + eps()] for i in range(len(coords))])
+    return numpy.matrix([[x, y, f(x, y) + eps()] for (x,y) in list(coords())])
 
 
 
