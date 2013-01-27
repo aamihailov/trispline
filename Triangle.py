@@ -22,8 +22,8 @@ class Triangle(object):
         if z is not None:
             self._n[0] = (y[1]-y[0])*(z[2]-z[0]) - (z[1]-z[0])*(y[2]-y[0])
             self._n[1] = (x[2]-x[0])*(z[1]-z[0]) - (x[1]-x[0])*(z[2]-z[0])
-            self.zdx   = self._n[0] / self._n[2]
-            self.zdy   = self._n[1] / self._n[2]
+            self.zdx   = - self._n[0] / self._n[2]
+            self.zdy   = - self._n[1] / self._n[2]
 
     def set_z(self, z):
         self._z = z

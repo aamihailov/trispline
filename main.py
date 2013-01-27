@@ -40,7 +40,7 @@ grid      = Grid(coords)
 #img       = plot_points(coords, f)
 
 spline    = CubicHermiteSpline(grid, f)
-#img       = spline.plot((100,100))
-img       = spline.plot_x_cut(0.15, 200)
+img       = spline.plot((100,100))
+#img       = spline.plot_x_cut(0.15, 200)
 img.show()
 

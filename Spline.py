@@ -113,3 +113,4 @@ class CubicHermiteSpline(Spline):
             c[10] = fdy3;     psi[10] = L3 * ( (y3-y1)*L1*(L2-L3)  +  (y3-y2)*L2*(L1-L3) )
 
             return np.dot(c, psi)
+
