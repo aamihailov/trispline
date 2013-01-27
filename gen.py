@@ -1,5 +1,3 @@
-import matplotlib
-
 __author__ = 'Anastassia'
 
 import numpy

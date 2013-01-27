@@ -4,7 +4,7 @@ import random
 import numpy
 from gen import generate_uniform, generate_nonuniform, save_to_file
 
-f = lambda x, y: numpy.sin(x   +   2*y**2 / (x-0.5))
+f = lambda x, y: 1 - 1./( x + y )
 
 def eps():
     return 0
@@ -18,8 +18,8 @@ def coordgen():
         for y in numpy.arange(-1,1,0.2):
             yield (x + eps(), y + eps())
 
-xs   = numpy.arange(-1, 1, 0.2)
-ys   = numpy.arange(-1, 1, 0.2)
+xs   = numpy.arange(-1, 1, 0.1)
+ys   = numpy.arange(-1, 1, 0.1)
 
 data = generate_uniform(xs, ys, f, eps)
 
@@ -33,26 +33,14 @@ save_to_file("tests/t0.dat", data)
 
 from gen    import load_from_file, plot_points
 from Grid   import Grid
-from Spline import Spline
+from Spline import LinearInterpolation
 
 coords, f = load_from_file('tests/t0.dat')
 grid      = Grid(coords)
 img       = grid.plot()
 #img       = plot_points(coords, f)
-#img.show()
 
-spline    = Spline(grid, f)
+spline    = LinearInterpolation(grid, f)
+img       = spline.plot((200,200))
+img.show()
 
-
-
-import matplotlib.pyplot as plt
-import numpy as np
-import pylab
-
-x = y = np.arange(-1.05, 1.05, 0.01)
-X, Y  = pylab.meshgrid(x,y)
-
-Z = np.array([[spline.value([xi, yi]) for xi in x] for yi in y ])
-
-plt.pcolor(X, Y, Z)
-plt.show()

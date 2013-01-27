@@ -36,6 +36,15 @@ class Triangle(object):
         b = self._transform[:2].dot(coords - self._transform[2])
         return np.r_[b[0], b[1], 1-b[0]-b[1]]
 
+    def dec2cc(self, coords):
+        bc = self.dec2bc(coords)
+        cc = [
+            bc[0] * ( 3 * bc[0] - 2 * bc[0] ** 2 - 7 * bc[1] * bc[2] ),
+            bc[1] * ( 3 * bc[1] - 2 * bc[1] ** 2 - 7 * bc[2] * bc[0] ),
+            bc[2] * ( 3 * bc[2] - 2 * bc[2] ** 2 - 7 * bc[0] * bc[1] ),
+        ]
+        return cc
+
     def value(self, coords):
         return sum(np.multiply(self.dec2bc(coords), self._z)) if self._z is not None else 1.0
 
@@ -75,8 +84,8 @@ class Grid(Delaunay):
         # https://github.com/matplotlib/matplotlib/pull/1576
         p = self.points.copy()
         v = self.vertices.copy()
-        plt.triplot(p[:,0], p[:,1], v, '-')
-        return plt
+        img = plt.triplot(p[:,0], p[:,1], v, '-')
+        return img
 
     def value(self, coords):
         ti = int(self.find_simplex(coords))
