@@ -74,8 +74,9 @@ class CubicHermiteSpline(Spline):
         for i in xrange(self._grid.npoints):
             self._derivatives[i]    = [0, 0]
             tri = [self._grid._triangles[j] for j in self._grid.tri_vertices[i]]
-            self._derivatives[i][0] = np.average([t.zdx for t in tri])
-            self._derivatives[i][1] = np.average([t.zdy for t in tri])
+            den = np.sum([np.fabs(t._n[2]) for t in tri])
+            self._derivatives[i][0] = np.sum([np.fabs(t._n[2]) * t.zdx for t in tri]) / den
+            self._derivatives[i][1] = np.sum([np.fabs(t._n[2]) * t.zdy for t in tri]) / den
 
     def value(self, coords):
         tri = int(self._grid.find_simplex(coords))
@@ -94,6 +95,7 @@ class CubicHermiteSpline(Spline):
             fdx2 = self._derivatives[p[1]][0]; fdy2 = self._derivatives[p[1]][1]
             fdx3 = self._derivatives[p[2]][0]; fdy3 = self._derivatives[p[2]][1]
 
+#            favg = 1.04 * np.average(tri._z)
             favg = np.average(tri._z)
 
             c   = [0] * 11      # Coefficients

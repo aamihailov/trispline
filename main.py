@@ -4,10 +4,12 @@ import random
 import numpy
 from gen import generate_uniform, generate_nonuniform, save_to_file
 
-f = lambda x, y: y*x**2 - y**3
+f = lambda x, y: numpy.sin(3*y + 2*x**2)
+#f = lambda x, y: x**2 - y**2
+#f = lambda x, y: x**2 - y**2 + y - y**3
 
 def eps():
-    return random.normalvariate(0, 0.00)
+    return random.normalvariate(0, 0.05)
 
 def rand():
     return random.uniform(-1, 1)
@@ -16,6 +18,7 @@ def coordgen():
     for x in numpy.arange(-1,1,0.2):
         for y in numpy.arange(-1,1,0.2):
             yield (x + eps(), y + eps())
+#            yield (x, y)
 
 xs   = numpy.arange(-1, 1, 0.25)
 ys   = numpy.arange(-1, 1, 0.25)
@@ -39,8 +42,11 @@ grid      = Grid(coords)
 #img       = grid.plot()
 #img       = plot_points(coords, f)
 
+spline    = LinearInterpolation(grid, f)
+img       = spline.plot((200,200))
+#img       = spline.plot_y_cut(-0.5, 200)
+img.figure()
 spline    = CubicHermiteSpline(grid, f)
 img       = spline.plot((200,200))
-#img       = spline.plot_x_cut(0.15, 200)
 img.show()
 
