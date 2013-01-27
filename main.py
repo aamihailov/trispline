@@ -4,10 +4,10 @@ import random
 import numpy
 from gen import generate_uniform, generate_nonuniform, save_to_file
 
-f = lambda x, y: 1 + (1-x)**2 - y**2
+f = lambda x, y: x + y
 
 def eps():
-    return random.normalvariate(0, 0.01)
+    return random.normalvariate(0, 0.00)
 
 def rand():
     return random.uniform(-1, 1)
@@ -32,14 +32,15 @@ save_to_file("tests/t0.dat", data)
 
 from gen    import load_from_file, plot_points
 from Grid   import Grid
-from Spline import LinearInterpolation
+from Spline import LinearInterpolation, CubicHermiteSpline
 
 coords, f = load_from_file('tests/t0.dat')
 grid      = Grid(coords)
-img       = grid.plot()
+#img       = grid.plot()
 #img       = plot_points(coords, f)
 
-spline    = LinearInterpolation(grid, f)
-img       = spline.plot((200,200))
+spline    = CubicHermiteSpline(grid, f)
+#img       = spline.plot((100,100))
+img       = spline.plot_x_cut(0.15, 200)
 img.show()
 

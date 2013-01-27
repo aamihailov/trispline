@@ -36,6 +36,18 @@ class Triangle(object):
         b = self._transform[:2].dot(coords - self._transform[2])
         return np.r_[b[0], b[1], 1-b[0]-b[1]]
 
+    def L1(self, coords):
+        bc = self.dec2bc(coords)
+        return bc[0]
+
+    def L2(self, coords):
+        bc = self.dec2bc(coords)
+        return bc[1]
+
+    def L3(self, coords):
+        bc = self.dec2bc(coords)
+        return bc[2]
+
     def dec2cc(self, coords):
         bc = self.dec2bc(coords)
         cc = [
@@ -53,3 +65,4 @@ class Triangle(object):
         y = self._y
 
         return (y[0]-y[1])*(x[2]-x[0]) + (x[1]-x[0])*(y[2]-y[0]) > 0
+

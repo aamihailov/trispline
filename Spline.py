@@ -36,6 +36,24 @@ class Spline(object):
 
         return plt
 
+    def plot_x_cut(self, x, steps=100):
+        ystep = ( self._grid.max_bound[1] - self._grid.min_bound[1] ) / steps
+        y = np.arange(self._grid.min_bound[1], self._grid.max_bound[1], ystep)
+        f = np.array([self.value([x, yi]) for yi in y ])
+        plt.plot(y, f)
+        plt.xlim(self._grid.min_bound[1], self._grid.max_bound[1])
+        return plt
+
+    def plot_y_cut(self, y, steps=100):
+        xstep = ( self._grid.max_bound[0] - self._grid.min_bound[0] ) / steps
+        x = np.arange(self._grid.min_bound[0], self._grid.max_bound[0], xstep)
+        f = np.array([self.value([xi, y]) for xi in x ])
+        plt.plot(x, f)
+        plt.xlim(self._grid.min_bound[0], self._grid.max_bound[0])
+        return plt
+
+
+
 
 class LinearInterpolation(Spline):
     def __init__(self, grid, f):
@@ -49,11 +67,49 @@ class LinearInterpolation(Spline):
 class CubicHermiteSpline(Spline):
     def __init__(self, grid, f):
         super(CubicHermiteSpline, self).__init__(grid, f)
+        self._init_derivatives()
 
     def _init_derivatives(self):
-        self._derivatives = [(0,0)] * self._grid.npoints
+        self._derivatives = [[0,0]] * self._grid.npoints
         for i in xrange(self._grid.npoints):
-            self._derivatives[i] = np.average(self._grid.tri_vertices[i])
+            tri = [self._grid._triangles[j] for j in self._grid.tri_vertices[i]]
+            self._derivatives[i][0] = np.average([t.zdx for t in tri])
+            self._derivatives[i][1] = np.average([t.zdy for t in tri])
 
     def value(self, coords):
-        return self._grid.value(coords)
+        tri = int(self._grid.find_simplex(coords))
+        if tri < 0:
+            return 0
+        else:
+            p   = self._grid.vertices[tri]
+            tri = self._grid._triangles[tri]
+
+            L1  = tri.L1(coords);      L2  = tri.L2(coords);     L3  = tri.L3(coords)
+            x1  = tri._x[0];           x2  = tri._x[1];          x3  = tri._x[2]
+            y1  = tri._y[0];           y2  = tri._y[1];          y3  = tri._y[2]
+            f1  = tri._z[0];           f2  = tri._z[1];          f3  = tri._z[2]
+
+            fdx1 = self._derivatives[p[0]][0]; fdy1 = self._derivatives[p[0]][1]
+            fdx2 = self._derivatives[p[1]][0]; fdy2 = self._derivatives[p[1]][1]
+            fdx3 = self._derivatives[p[2]][0]; fdy3 = self._derivatives[p[2]][1]
+
+            favg = np.average(tri._z)
+
+            c   = [0] * 11      # Coefficients
+            psi = [0] * 11      # Values of hermite basis at the current point
+
+            c[1]  = f1;       psi[1]  = L1 * (3*L1  -  2*L1**2  -  7*L2*L3)
+            c[2]  = f2;       psi[2]  = L2 * (3*L2  -  2*L2**2  -  7*L3*L1)
+            c[3]  = f3;       psi[3]  = L3 * (3*L3  -  2*L3**2  -  7*L1*L2)
+
+            c[4]  = favg;     psi[4]  = 27 * L1 * L2 * L3
+
+            c[5]  = fdx1;     psi[5]  = L1 * ( (x1-x2)*L2*(L3-L1)  +  (x1-x3)*L3*(L2-L1) )
+            c[6]  = fdx2;     psi[6]  = L2 * ( (x2-x3)*L3*(L1-L2)  +  (x2-x1)*L1*(L3-L2) )
+            c[7]  = fdx3;     psi[7]  = L3 * ( (x3-x1)*L1*(L2-L3)  +  (x3-x2)*L2*(L1-L3) )
+
+            c[8]  = fdy1;     psi[8]  = L1 * ( (y1-y2)*L2*(L3-L1)  +  (y1-y3)*L3*(L2-L1) )
+            c[9]  = fdy2;     psi[9]  = L2 * ( (y2-y3)*L3*(L1-L2)  +  (y2-y1)*L1*(L3-L2) )
+            c[10] = fdy3;     psi[10] = L3 * ( (y3-y1)*L1*(L2-L3)  +  (y3-y2)*L2*(L1-L3) )
+
+            return np.dot(c, psi)
