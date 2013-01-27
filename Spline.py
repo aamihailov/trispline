@@ -70,8 +70,9 @@ class CubicHermiteSpline(Spline):
         self._init_derivatives()
 
     def _init_derivatives(self):
-        self._derivatives = [[0,0]] * self._grid.npoints
+        self._derivatives = [None] * self._grid.npoints
         for i in xrange(self._grid.npoints):
+            self._derivatives[i]    = [0, 0]
             tri = [self._grid._triangles[j] for j in self._grid.tri_vertices[i]]
             self._derivatives[i][0] = np.average([t.zdx for t in tri])
             self._derivatives[i][1] = np.average([t.zdy for t in tri])

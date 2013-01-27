@@ -12,7 +12,9 @@ class Grid(Delaunay):
         self._init_triangles()
 
     def _init_tri_vertices(self):
-        self.tri_vertices = [set()] * self.npoints
+        self.tri_vertices = [None] * self.npoints
+        for i in xrange(self.npoints):
+            self.tri_vertices[i] = set()
         for i in xrange(self.nsimplex):
             tri = self.vertices[i]
             self.tri_vertices[tri[0]].update([ i ])

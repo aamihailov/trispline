@@ -4,7 +4,7 @@ import random
 import numpy
 from gen import generate_uniform, generate_nonuniform, save_to_file
 
-f = lambda x, y: x + y
+f = lambda x, y: y*x**2 - y**3
 
 def eps():
     return random.normalvariate(0, 0.00)
@@ -40,7 +40,7 @@ grid      = Grid(coords)
 #img       = plot_points(coords, f)
 
 spline    = CubicHermiteSpline(grid, f)
-img       = spline.plot((100,100))
+img       = spline.plot((200,200))
 #img       = spline.plot_x_cut(0.15, 200)
 img.show()
 
