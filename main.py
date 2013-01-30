@@ -7,10 +7,10 @@ import random
 import numpy
 from gen import generate_uniform, generate_nonuniform, save_to_file
 
-f = lambda x, y: numpy.sin(3*y + 2*x**2)
-#f = lambda x, y: x**2 - y**2
-#f = lambda x, y: x**2 - y**2 + y - y**3
-f = lambda x, y: x + y
+prefix = 'sin';       f = lambda x, y: numpy.sin(3*y + 2*x**2)
+#prefix = 'quadratic'; f = lambda x, y: x**2 - y**2
+#prefix = 'cubic';     f = lambda x, y: x**2 - y**2 + y - y**3
+#prefix = 'linear';    f = lambda x, y: x + y
 
 def eps():
     k = 0.05
@@ -42,8 +42,6 @@ save_to_file("tests/t0.dat", data)
 from gen    import load_from_file, plot_points
 from Grid   import Grid, check_and_filter
 from Spline import LinearInterpolation, CubicHermiteSpline
-
-prefix = 'linear'
 
 coords, b = load_from_file('tests/t0.dat')
 grid      = Grid(coords)
