@@ -36,19 +36,25 @@ class Spline(object):
 
         return plt
 
-    def plot_x_cut(self, x, steps=100):
+    def plot_x_cut(self, x, steps=100, real = None):
         ystep = ( self._grid.max_bound[1] - self._grid.min_bound[1] ) / steps
         y = np.arange(self._grid.min_bound[1], self._grid.max_bound[1], ystep)
         f = np.array([self.value([x, yi]) for yi in y ])
         plt.plot(y, f)
+        if real is not None:
+            f = np.array([real(x, yi) for yi in y ])
+            plt.plot(y, f)
         plt.xlim(self._grid.min_bound[1], self._grid.max_bound[1])
         return plt
 
-    def plot_y_cut(self, y, steps=100):
+    def plot_y_cut(self, y, steps=100, real = None):
         xstep = ( self._grid.max_bound[0] - self._grid.min_bound[0] ) / steps
         x = np.arange(self._grid.min_bound[0], self._grid.max_bound[0], xstep)
         f = np.array([self.value([xi, y]) for xi in x ])
         plt.plot(x, f)
+        if real is not None:
+            f = np.array([real(xi, y) for xi in x ])
+            plt.plot(x, f)
         plt.xlim(self._grid.min_bound[0], self._grid.max_bound[0])
         return plt
 
@@ -95,7 +101,6 @@ class CubicHermiteSpline(Spline):
             fdx2 = self._derivatives[p[1]][0]; fdy2 = self._derivatives[p[1]][1]
             fdx3 = self._derivatives[p[2]][0]; fdy3 = self._derivatives[p[2]][1]
 
-#            favg = 1.04 * np.average(tri._z)
             favg = np.average(tri._z)
 
             c   = [0] * 11      # Coefficients

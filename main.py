@@ -1,3 +1,6 @@
+from numpy.core.multiarray import arange
+from sympy.plotting.plot import plt
+
 __author__ = 'Mihailov'
 
 import random
@@ -7,9 +10,12 @@ from gen import generate_uniform, generate_nonuniform, save_to_file
 f = lambda x, y: numpy.sin(3*y + 2*x**2)
 #f = lambda x, y: x**2 - y**2
 #f = lambda x, y: x**2 - y**2 + y - y**3
+f = lambda x, y: x + y
 
 def eps():
-    return random.normalvariate(0, 0.05)
+    k = 0.05
+    d = 0.05 if random.uniform(-k, 1-k) >= 0.00 else 1.00
+    return random.normalvariate(0, d)
 
 def rand():
     return random.uniform(-1, 1)
@@ -17,11 +23,11 @@ def rand():
 def coordgen():
     for x in numpy.arange(-1,1,0.2):
         for y in numpy.arange(-1,1,0.2):
-            yield (x + eps(), y + eps())
-#            yield (x, y)
+#            yield (x + eps(), y + eps())
+            yield (x, y)
 
-xs   = numpy.arange(-1, 1, 0.25)
-ys   = numpy.arange(-1, 1, 0.25)
+xs   = numpy.arange(-1, 1, 0.9)
+ys   = numpy.arange(-1, 1, 0.9)
 
 data = generate_uniform(xs, ys, f, eps)
 
@@ -34,19 +40,40 @@ save_to_file("tests/t0.dat", data)
 
 
 from gen    import load_from_file, plot_points
-from Grid   import Grid
+from Grid   import Grid, check_and_filter
 from Spline import LinearInterpolation, CubicHermiteSpline
 
-coords, f = load_from_file('tests/t0.dat')
+prefix = 'linear'
+
+coords, b = load_from_file('tests/t0.dat')
 grid      = Grid(coords)
 #img       = grid.plot()
-#img       = plot_points(coords, f)
+g = check_and_filter(grid, b)
+g.plot()
+plot_points(coords[g.indexes], b[g.indexes])
+plt.savefig('tests/%s/grid.png' % prefix)
+plt.figure()
+#exit()
 
-spline    = LinearInterpolation(grid, f)
-img       = spline.plot((200,200))
-#img       = spline.plot_y_cut(-0.5, 200)
-img.figure()
-spline    = CubicHermiteSpline(grid, f)
-img       = spline.plot((200,200))
-img.show()
+#spline    = LinearInterpolation(grid, b)
+#img       = spline.plot((200,200))
+#img.figure()
+#img       = spline.plot_y_cut(-0.6, 200)
+#img.figure()
+#
+spline    = CubicHermiteSpline(grid, b)
+for y in arange(-1.0, 1.0, 0.2):
+    spline.plot_y_cut(y, 200, f)
+    plt.savefig('tests/%s/nf%.2f.png' % (prefix, y) )
+    plt.figure()
+spline.plot((200,200))
+plt.savefig('tests/%s/nf-field.png' % prefix)
+plt.figure()
 
+spline    = CubicHermiteSpline(g, b[g.indexes])
+for y in arange(-1.0, 1.0, 0.2):
+    spline.plot_y_cut(y, 200, f)
+    plt.savefig('tests/%s/f%.2f.png' % (prefix, y) )
+    plt.figure()
+spline.plot((200,200))
+plt.savefig('tests/%s/f-field.png' % prefix)
